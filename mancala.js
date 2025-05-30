@@ -36,7 +36,6 @@ function checkGameOver(board, score) {
   return null;
 }
 
-// ✅ New function: pure version of endgame for AI
 function simulateGameOver(board, score) {
   const tempBoard = [board[0].slice(), board[1].slice()];
   const tempScore = [score[0], score[1]];
@@ -131,7 +130,6 @@ function Validate(board, player, pos, score) {
 
   if (AI && currentPlayer === 1 && win === null) {
     AIMove(board, 1, score);
-    updateVisuals();
   }
 
   updateVisuals();
@@ -147,6 +145,8 @@ function evaluate(board, score, player) {
   const opponentSeeds = board[1 - player].reduce((a, b) => a + b, 0);
   return (score[player] - score[1 - player]) + 0.2 * (playerSeeds - opponentSeeds);
 }
+
+const transpositionTable = new Map();
 
 function miniMax(board, player, score, isMax, depth, alpha, beta) {
   const gameOver = simulateGameOver(board, score);
@@ -190,13 +190,13 @@ function miniMax(board, player, score, isMax, depth, alpha, beta) {
 }
 
 function AIMove(board, player, score) {
-  console.log(`AIMove() - Player ${player + 1}'s turn`);
   const depth = 10;
+  aiMoveHistory = []; // reset
+
   while (currentPlayer === player && win === null) {
     const best = miniMax(board, player, score, true, depth, -Infinity, Infinity);
     if (best && best.index !== undefined) {
-      console.log(`AI chose pit ${best.index} with expected score ${best.score}`);
-      lastAIMove = best.index;
+      aiMoveHistory.push(best.index);
 
       const pitId = "1" + (5 - best.index);
       const pit = document.getElementById(pitId);
@@ -207,10 +207,12 @@ function AIMove(board, player, score) {
 
       currentPlayer = takeTurn(board, player, best.index, score);
     } else {
-      console.log("AI found no move");
       break;
     }
   }
+
+  updateVisuals();
+  updateLastMoveDisplay();
 }
 
 function renderSeeds(pitId, count) {
@@ -269,14 +271,14 @@ function updateVisuals() {
   } else {
     cp.innerText = `Player ${win + 1} Wins! Final Score: P1 ${score[0]} - P2 ${score[1]}`;
   }
+}
 
+function updateLastMoveDisplay() {
   const lastMoveText = document.getElementById("lastMove");
-  if (lastMoveText) {
-    if (AI && lastAIMove !== null && win === null) {
-      lastMoveText.innerText = `AI played pit ${lastAIMove}`;
-    } else {
-      lastMoveText.innerText = "";
-    }
+  if (lastMoveText && AI && aiMoveHistory.length > 0 && win === null) {
+    lastMoveText.innerText = `AI moves: ${aiMoveHistory.join(" → ")}`;
+  } else if (lastMoveText) {
+    lastMoveText.innerText = "";
   }
 }
 
@@ -286,9 +288,9 @@ function AIButton() {
 
   if (AI && currentPlayer === 1 && win === null) {
     AIMove(board, 1, score);
-    updateVisuals();
   }
 
+  updateVisuals();
   return false;
 }
 
@@ -299,9 +301,9 @@ function resetGame() {
   score[1] = 0;
   board[0] = [4, 4, 4, 4, 4, 4];
   board[1] = [4, 4, 4, 4, 4, 4];
-  lastAIMove = null;
-  finalScoreDisplay = null;
+  aiMoveHistory = [];
   updateVisuals();
+  updateLastMoveDisplay();
   document.getElementById("AIButton").innerText = AI ? "Turn AI Off" : "Turn AI On";
 }
 
@@ -309,7 +311,7 @@ function resetGame() {
 let AI = false;
 let win = null;
 let currentPlayer = 0;
-let lastAIMove = null;
+let aiMoveHistory = [];
 const board = createBoard();
 const score = [0, 0];
 

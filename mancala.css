@@ -1,112 +1,298 @@
-
-
-.imageContainer {
-    margin-left:36%;
-    display: inline-block;
-    position: relative;
-    text-align: center;
-    color: rgb(6, 0, 13);
- }
- .caption{
-    font-size: 25px;
-    font-weight: bolder;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- }
- .p10 {
-    position: absolute;
-    top: 80px;
-    left: 182px;
- }
- .p11 {
-    position: absolute;
-    top: 80px;
-    left: 286px;
- }
- .p12 {
-    position: absolute;
-    top: 80px;
-    left: 390px;
- }
- .p13 {
-    position: absolute;
-    top: 80px;
-    left: 494px;
- }
- .p14 {
-    position: absolute;
-    top: 80px;
-    left: 598px;
- }
- .p15 {
-    position: absolute;
-    top: 80px;
-    left: 702px; 
- }
- .p1s {
-    position: absolute;
-    bottom: 250px;
-    left: 78px;
- }
- .p20 {
-    position: absolute;
-    bottom: 83px;
-    left: 182px;
- }
- .p21 {
-    position: absolute;
-    bottom: 83px;
-    left: 286px;
- }
- .p22 {
-    position: absolute;
-    bottom: 83px;
-    left: 390px;
- }
- .p23 {
-    position: absolute;
-    bottom: 83px;
-    left: 494px;
- }
- .p24 {
-    position: absolute;
-    bottom: 83px;
-    left: 598px;
- }
- .p25 {
-    position: absolute;
-    bottom: 83px;
-    left: 702px;
- }
- .p2s {
-    position: absolute;
-    bottom: 250px;
-    left: 803px;
- }
- .current {
-   position: absolute;
-   bottom: 250px;
-   left: 308px;
+/* === General Layout & Typography === */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8fafc;
+  color: #111827;
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
 }
-.column {
-   float: left;
- }
- 
- .left {
-   width: 35%;
-   display: grid
- }
- 
- .right {
-   width: 10%;
- }
- button {
-   background-color: #db7e2d; /* Green */
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  max-width: 600px;
+  margin: 0 auto 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+header .tagline {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 2rem;
+}
+
+/* === Button Styling === */
+button {
+  background-color: #10b981;
   border: none;
   color: white;
-  padding: 8px 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #059669;
+}
+
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* === Status Text === */
+.status {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* === Layout Container === */
+.layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 3rem auto;
+}
+
+/* === How to Play Section === */
+.how-to-play {
+  flex: 1;
+  min-width: 300px;
+  max-width: 450px;
+  background: #f1f5f9;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.how-to-play h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.how-to-play ul {
+  padding-left: 1.2rem;
+}
+
+.how-to-play li {
+  margin-bottom: 0.6rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* === Game Area === */
+.game-area {
+  flex: 1;
+  min-width: 360px;
   text-align: center;
-  text-decoration: none;
+}
+
+/* === Board Layout === */
+.board {
+  display: grid;
+  grid-template-columns: 70px repeat(6, 70px) 70px;
+  grid-template-rows: 70px 70px;
+  gap: 10px;
+  margin-top: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === Pits & Stores === */
+.pit, .store {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  font-weight: bold;
+  font-size: 1.2rem;
+  position: relative;
+}
+
+.pit {
+  width: 70px;
+  height: 70px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.pit:hover {
+  transform: scale(1.05);
+  background-color: #e5e7eb;
+}
+
+.store {
+  grid-row: span 2;
+  width: 70px;
+  height: 150px;
+  background-color: #9ca3af;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  cursor: default;
+}
+
+/* === Player Highlighting === */
+.player1 {
+  background-color: #facc15 !important; /* yellow */
+  box-shadow: 0 0 10px #fbbf24;
+}
+
+.player2 {
+  background-color: #60a5fa !important; /* blue */
+  box-shadow: 0 0 10px #3b82f6;
+}
+
+/* === Seed (Stone) Styling === */
+.pit-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pit-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.pit-label {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #111827;
+  background-color: #f3f4f6;
+  padding: 1px 4px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.seed {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #4b5563;
+  margin: 2px;
   display: inline-block;
-  font-size: 16px;
-  margin: auto;
- }
+  transition: transform 0.2s ease;
+}
+
+.pit-content.too-many .seed {
+  transform: scale(0.6);
+  margin: 1px;
+}
+
+/* === Seed Animation === */
+@keyframes pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* === Player Labels === */
+.labels {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.player-label {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin: 0 1rem;
+}
+
+.bottom-label {
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+/* === Footer === */
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+footer a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .how-to-play, .game-area {
+    width: 100%;
+    max-width: 90%;
+  }
+
+  .board {
+    grid-template-columns: 50px repeat(6, 50px) 50px;
+    grid-template-rows: 60px 60px;
+    gap: 6px;
+  }
+
+  .pit, .store {
+    width: 50px;
+    height: 50px;
+    font-size: 1rem;
+  }
+
+  .store {
+    height: 110px;
+  }
+
+  .seed {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+.ai-move {
+  border: 3px solid red;
+  box-shadow: 0 0 10px red;
+}

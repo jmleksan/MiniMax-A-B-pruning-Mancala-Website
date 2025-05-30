@@ -189,28 +189,9 @@ function evaluate(board, score, player) {
   const playerSeeds = board[player].reduce((a, b) => a + b, 0);
   const opponentSeeds = board[opponent].reduce((a, b) => a + b, 0);
 
-  // Weighted score
+  // Simple heuristic: score difference + pit seed difference
   let value = (score[player] - score[opponent]) * 5;
-
-  // Seed advantage in hand
   value += (playerSeeds - opponentSeeds) * 0.5;
-
-  // Bonus for potential extra turns (pits that end in store)
-  for (let i = 0; i < 6; i++) {
-    const seeds = board[player][i];
-    if (seeds === 0) continue;
-    const landing = player === 0 ? i + seeds : i - seeds;
-    if ((player === 0 && landing === 6) || (player === 1 && landing === -1)) {
-      value += 3;
-    }
-  }
-
-  // Bonus for capture potential
-  for (let i = 0; i < 6; i++) {
-    if (board[player][i] === 1 && board[opponent][i] > 0) {
-      value += board[opponent][i] + 1;
-    }
-  }
 
   return value;
 }

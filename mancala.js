@@ -12,6 +12,49 @@ function declareWinner(score) {
   return 2;
 }
 
+function sortMoves(board, player, moves) {
+  return moves.sort((a, b) => {
+    const evalA = evaluateMove(board, player, a);
+    const evalB = evaluateMove(board, player, b);
+    return evalB - evalA; // higher score first
+  });
+}
+
+function evaluateMove(board, player, pos) {
+  const seeds = board[player][pos];
+  if (seeds === 0) return -Infinity;
+
+  let value = 0;
+
+  // Base value: seeds and position (closer to scoring end is better)
+  value += seeds;
+  value += (player === 0 ? pos : 5 - pos);
+
+  // Predict landing pit
+  const totalPits = 12;
+  const totalSpots = seeds + pos;
+  const landingIndex = (player === 0)
+    ? (pos + seeds) % totalPits
+    : (12 - pos + seeds) % totalPits;
+
+  const landingOnStore = (player === 0 && pos + seeds === 6) || (player === 1 && pos - seeds === -1);
+  if (landingOnStore) value += 3; // Extra turn bonus
+
+  // Potential capture
+  const landingPit = (pos + seeds) % 12;
+  const ownRow = player;
+  const mirrorPit = 5 - landingPit;
+  if (
+    landingPit < 6 &&
+    board[ownRow][landingPit] === 0 &&
+    board[1 - ownRow][mirrorPit] > 0
+  ) {
+    value += board[1 - ownRow][mirrorPit] + 2; // capturing value
+  }
+
+  return value;
+}
+
 let finalScoreDisplay = null;
 
 function checkGameOver(board, score) {
@@ -146,16 +189,17 @@ function evaluate(board, score, player) {
   return (score[player] - score[1 - player]) + 0.2 * (playerSeeds - opponentSeeds);
 }
 
-const transpositionTable = new Map();
-
 function miniMax(board, player, score, isMax, depth, alpha, beta) {
+  nodesEvaluated++;
+
   const gameOver = simulateGameOver(board, score);
   if (gameOver.over || depth === 0) {
     const finalScore = gameOver.over ? gameOver.score : score;
     return { score: evaluate(board, finalScore, player) };
   }
 
-  const possibleMoves = findPossibleMoves(board, player).sort((a, b) => board[player][b] - board[player][a]);
+  const possibleMoves = sortMoves(board, player, findPossibleMoves(board, player));
+
   if (possibleMoves.length === 0) return { score: evaluate(board, score, player) };
 
   let best = { index: possibleMoves[0], score: isMax ? -Infinity : Infinity };
@@ -191,7 +235,10 @@ function miniMax(board, player, score, isMax, depth, alpha, beta) {
 
 function AIMove(board, player, score) {
   const depth = 10;
-  aiMoveHistory = []; // reset
+  aiMoveHistory = [];
+
+  nodesEvaluated = 0;
+  const start = performance.now();
 
   while (currentPlayer === player && win === null) {
     const best = miniMax(board, player, score, true, depth, -Infinity, Infinity);
@@ -209,6 +256,16 @@ function AIMove(board, player, score) {
     } else {
       break;
     }
+  }
+
+  const end = performance.now();
+  const timeTaken = (end - start).toFixed(2);
+
+  console.log(`Minimax completed in ${timeTaken} ms | Nodes evaluated: ${nodesEvaluated}`);
+
+  const perfDisplay = document.getElementById("perfDisplay");
+  if (perfDisplay) {
+    perfDisplay.innerText = `AI move took ${timeTaken} ms | Nodes: ${nodesEvaluated}`;
   }
 
   updateVisuals();
@@ -314,6 +371,7 @@ let currentPlayer = 0;
 let aiMoveHistory = [];
 const board = createBoard();
 const score = [0, 0];
+let nodesEvaluated = 0;
 
 window.onload = () => {
   updateVisuals();

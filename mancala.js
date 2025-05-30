@@ -184,9 +184,35 @@ function findPossibleMoves(board, player) {
 }
 
 function evaluate(board, score, player) {
+  const opponent = 1 - player;
+
   const playerSeeds = board[player].reduce((a, b) => a + b, 0);
-  const opponentSeeds = board[1 - player].reduce((a, b) => a + b, 0);
-  return (score[player] - score[1 - player]) + 0.2 * (playerSeeds - opponentSeeds);
+  const opponentSeeds = board[opponent].reduce((a, b) => a + b, 0);
+
+  // Weighted score
+  let value = (score[player] - score[opponent]) * 5;
+
+  // Seed advantage in hand
+  value += (playerSeeds - opponentSeeds) * 0.5;
+
+  // Bonus for potential extra turns (pits that end in store)
+  for (let i = 0; i < 6; i++) {
+    const seeds = board[player][i];
+    if (seeds === 0) continue;
+    const landing = player === 0 ? i + seeds : i - seeds;
+    if ((player === 0 && landing === 6) || (player === 1 && landing === -1)) {
+      value += 3;
+    }
+  }
+
+  // Bonus for capture potential
+  for (let i = 0; i < 6; i++) {
+    if (board[player][i] === 1 && board[opponent][i] > 0) {
+      value += board[opponent][i] + 1;
+    }
+  }
+
+  return value;
 }
 
 function miniMax(board, player, score, isMax, depth, alpha, beta) {

@@ -233,8 +233,14 @@ function miniMax(board, player, score, isMax, depth, alpha, beta) {
   return best;
 }
 
+function getDynamicDepth(board) {
+  const totalSeeds = board.flat().reduce((a, b) => a + b, 0);
+  if (totalSeeds > 32) return 8;
+  return 10;
+}
+
 function AIMove(board, player, score) {
-  const depth = 10;
+  const depth = getDynamicDepth(board);
   aiMoveHistory = [];
 
   nodesEvaluated = 0;
